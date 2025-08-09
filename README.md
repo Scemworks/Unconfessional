@@ -34,10 +34,13 @@ For Software:
 ### Implementation
 For Software:
 # Installation
-[commands]
+> `git clone "https://github.com/Scemworks/unconfessional.git"`
 
+>`cd unconfessional`
+
+>`pnpm install`
 # Run
-[commands]
+>`pnpm dev`
 
 ### Project Documentation
 For Software: 
