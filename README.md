@@ -1,39 +1,35 @@
 <img width="3188" height="1202" alt="frame (3)" src="https://github.com/user-attachments/assets/517ad8e9-ad22-457d-9538-a9e62d137cd7" />
 
 
-# [Project Name] 🎯
+# The UNcofessional 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: Js Chillin
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: Mohammed Shadin - Government Engineering College, Palakkad
+- Member 2: N Fadeela - Government Engineering College, Palakkad
 
 ### Project Description
-[2-3 lines about what your project does]
+The Unconfessional is like a diary, but with commitment issues, it scrambles every word you write, then makes you play ridiculous mini-games just to read your own thoughts. It’s perfect for anyone who thinks journaling is too therapeutic and would rather wrestle their keyboard for sport.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+We’re solving the “problem” of journaling being way too easy and emotionally rewarding.
+With The Unconfessional, you’ll never have to worry about achieving clarity, we’ll scramble your thoughts, dangle them in front of you, and make you win absurd mini-games to get them back. Inner peace? Overrated. Keyboard-induced rage? Now that’s character building.
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+By turning your diary into a chaotic escape room for your own thoughts.
+We scramble every letter you type, then guard the original text behind mini-games like Tic-Tac-Toe, number guessing, and memory matches. Win, and you get a fleeting glimpse of your message before it’s scrambled again. Lose, and you get a one-hour timeout to reflect on your life choices.
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
-
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+- TypeScript
+- NextJS
+- TailwindCSS,Framer-Motion
+- VS Code, Chat GPT
 
 ### Implementation
 For Software:
@@ -44,7 +40,7 @@ For Software:
 [commands]
 
 ### Project Documentation
-For Software:
+For Software: 
 
 # Screenshots (Add at least 3)
 ![Screenshot1](Add screenshot 1 here with proper name)
@@ -56,29 +52,6 @@ For Software:
 ![Screenshot3](Add screenshot 3 here with proper name)
 *Add caption explaining what this shows*
 
-# Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
-
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
-
 ### Project Demo
 # Video
 [Add your demo video link here]
@@ -88,9 +61,9 @@ For Hardware:
 [Add any extra demo materials/links]
 
 ## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- Mohammed Shadin: Implemented Keyboard Roulette, Linked mini games to  decipher, Initial Design
+- N Fadeela: Proposed the idea, Implemented the mini games, Design Finalization, Documentation
+- 
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
