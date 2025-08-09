@@ -1,7 +1,7 @@
 <img width="3188" height="1202" alt="frame (3)" src="https://github.com/user-attachments/assets/517ad8e9-ad22-457d-9538-a9e62d137cd7" />
 
 
-# The UNcofessional 🎯
+# The Unconfessional 🎯
 
 
 ## Basic Details
@@ -70,8 +70,7 @@ Tic Tac Toe game
 This showcases all the features of this Project such as deciphering the message, deleting the entry, sealing the thoughts, games etc.....
 
 # Additional Demos
-[Add any extra demo materials/links]
-
+[Site Link](https://unconfessional.vercel.app)
 ## Team Contributions
 - Mohammed Shadin: Implemented Keyboard Roulette, Linked mini games to  decipher, Initial Design
 - N Fadeela: Proposed the idea, Implemented the mini games, Design Finalization, Documentation
