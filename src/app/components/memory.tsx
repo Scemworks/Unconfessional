@@ -8,18 +8,15 @@ interface MemoryGameProps {
 
 // Main component for the memory game with a refined vintage theme
 export default function MemoryGame({ onGameEnd }: MemoryGameProps) {
-  // Expanded pool of weird/funny emojis
-  const symbols = [
-    "🍕", "🦄", "💩", "🤡", "👹", "🦖", "🪳", "🛸", "👽", "🧟",
-    "🤯", "🐙", "🍔", "🪼", "🍟", "🎃", "🦔", "🪱"
-  ];
+  // Reduced pool of emojis for an easier 4x4 grid
+  const symbols = ["🍕", "🦄", "💩", "🤡", "👹", "🦖", "👽", "🐙"];
 
   // State variables for the game
   const [cards, setCards] = useState<string[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
   const [matched, setMatched] = useState<number[]>([]);
   const [pairsMatched, setPairsMatched] = useState<number>(0);
-  const [timeLeft, setTimeLeft] = useState<number>(120); // more time for bigger grid
+  const [timeLeft, setTimeLeft] = useState<number>(60); // Reduced time for a smaller grid
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [won, setWon] = useState<boolean>(false);
 
@@ -47,7 +44,7 @@ export default function MemoryGame({ onGameEnd }: MemoryGameProps) {
     setFlipped([]);
     setMatched([]);
     setPairsMatched(0);
-    setTimeLeft(120);
+    setTimeLeft(60); // Set time for the smaller grid
     setGameOver(false);
     setWon(false);
   };
@@ -92,7 +89,7 @@ export default function MemoryGame({ onGameEnd }: MemoryGameProps) {
       onContextMenu={(e) => e.preventDefault()}
     >
       {/* Container for the main game UI */}
-      <div className="relative max-w-4xl mx-auto">
+      <div className="relative max-w-lg mx-auto">
         {/* Book Cover */}
         <div 
           className="relative rounded-2xl shadow-2xl transition-all duration-300 border-4 border-amber-800"
@@ -135,7 +132,7 @@ export default function MemoryGame({ onGameEnd }: MemoryGameProps) {
               >
                 <p className="text-amber-900 font-bold text-lg">
                   Time Remaining:
-                  <span className={`font-black ml-2 ${timeLeft <= 30 ? 'text-red-600 animate-pulse' : 'text-amber-700'}`}>
+                  <span className={`font-black ml-2 ${timeLeft <= 15 ? 'text-red-600 animate-pulse' : 'text-amber-700'}`}>
                     {formatTime(timeLeft)}
                   </span>
                 </p>
@@ -164,7 +161,7 @@ export default function MemoryGame({ onGameEnd }: MemoryGameProps) {
             >
               
               {/* Memory Grid */}
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 max-w-2xl mx-auto justify-items-center">
+              <div className="grid grid-cols-4 gap-3 max-w-sm mx-auto justify-items-center">
                 {cards.map((card, idx) => {
                   const isFlipped = flipped.includes(idx) || matched.includes(idx);
                   const isMatched = matched.includes(idx);
@@ -227,7 +224,7 @@ export default function MemoryGame({ onGameEnd }: MemoryGameProps) {
                     <div>
                       <p className="mb-2">🎉 The memories have been restored!</p>
                       <p className="text-lg italic text-green-700">
-                        All sacred pairs united in {formatTime(120 - timeLeft)}
+                        All sacred pairs united in {formatTime(60 - timeLeft)}
                       </p>
                     </div>
                   ) : (
