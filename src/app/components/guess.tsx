@@ -1,7 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-export default function App() {
+// Props interface for the component
+interface GuessNumProps {
+  onGameEnd: (won: boolean) => void;
+}
+
+export default function GuessNum({ onGameEnd }: GuessNumProps) {
   const range = 100;
   const maxAttempts = 5;
 
@@ -40,6 +45,7 @@ export default function App() {
       if (numGuess === target) {
         setFeedback(`👑 You got it! The number was ${target}!`);
         setGameOver(true);
+        onGameEnd(true); // Call onGameEnd for a win
       } else {
         const remaining = attemptsLeft - 1;
         setAttemptsLeft(remaining);
@@ -47,6 +53,7 @@ export default function App() {
         if (remaining === 0) {
           setFeedback(`💔 Game Over. The number was ${target}.`);
           setGameOver(true);
+          onGameEnd(false); // Call onGameEnd for a loss
         } else {
           setFeedback(numGuess < target ? "⬆️ Guess higher" : "⬇️ Guess lower");
         }
@@ -57,8 +64,7 @@ export default function App() {
     setGuess("");
   };
 
-  // ✅ FIXED handleKeyPress
-  const handleKeyPress = (e:any) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleGuess();
     }
@@ -66,19 +72,8 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen p-4 flex items-center justify-center font-serif relative"
-      style={{
-        background:
-          "radial-gradient(ellipse at center, #8B4513 0%, #654321 35%, #3E2723 70%, #1C0E0A 100%)",
-      }}
+      className="font-serif"
     >
-      {/* Vintage paper background */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg ... %3C/svg%3E")`,
-        }}
-      />
       {/* Main Card */}
       <div
         className="relative w-full max-w-md p-8 rounded-2xl shadow-2xl transition-all duration-300"
@@ -109,13 +104,13 @@ export default function App() {
             className="text-4xl font-black mb-2"
             style={{ textShadow: "1px 1px 2px rgba(255,255,255,0.4)" }}
           >
-            The Unconfessional
+            The Number Oracle
           </h1>
           <p
             className="text-sm italic"
             style={{ textShadow: "1px 1px 1px rgba(255,255,255,0.3)" }}
           >
-            Your thoughts are safe here
+            Divine the secret integer
           </p>
 
           <div className="p-4 bg-white rounded-lg text-lg border border-pink-200 shadow-inner">
@@ -153,7 +148,7 @@ export default function App() {
                   boxShadow: "0 6px 12px rgba(212, 175, 55, 0.3)",
                 }}
               >
-                {isAnimating ? "Writing..." : "Seal Your Thoughts"}
+                {isAnimating ? "Divining..." : "Consult the Oracle"}
               </button>
               <p className="font-medium">
                 Attempts Left:{" "}
@@ -173,7 +168,7 @@ export default function App() {
                 borderColor: "#8B0000",
               }}
             >
-              Start a New Chapter
+              Seek Another Prophecy
             </button>
           )}
         </div>

@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import GuessNum from "./components/guess";
+import MemoryGame from "./components/memory";
+import TicTacToe from "./components/tictac";
 
 // The key for storing entries in the browser's localStorage.
 const LOCAL_STORAGE_KEY = "unconfessional-entries";
@@ -10,15 +13,17 @@ type Entry = {
   id: string;
   title: string;
   content: string; // scrambled text
-  actualContent: string; // original text (kept for future deciphering feature)
+  actualContent: string; // original text
   createdAt: string;
   failureCount: number;
   lockoutUntil?: number;
 };
 
-// --- Constants moved outside the component to prevent re-creation on each render ---
+type GameType = "guess" | "memory" | "tictactoe";
 
-// A helper component for the ornamental border to keep the main component cleaner.
+// --- Helper Components ---
+
+// A component for the ornamental border to keep the main component cleaner.
 const OrnamentalBorder = () => (
   <div className="absolute inset-0 p-2 pointer-events-none">
     <div className="w-full h-full border-4 border-black/80 p-1">
@@ -69,6 +74,7 @@ const keyboardRoulette: { [key: string]: string[] } = {
     '"': ['.', '!', '?', ',', ';', ':', "'"], "'": ['.', '!', '?', ',', ';', ':', '"']
 };
 
+
 export default function ConfessPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState(""); // Scrambled text
@@ -79,9 +85,15 @@ export default function ConfessPage() {
   const [spread, setSpread] = useState(false);
   const [cursorOverOpen, setCursorOverOpen] = useState(false);
   const [cursorOverClose, setCursorOverClose] = useState(false);
-  const [now, setNow] = useState(Date.now()); // State to track current time for lockouts
+  const [now, setNow] = useState(Date.now());
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+
+  // New state for game logic
+  const [showGameModal, setShowGameModal] = useState(false);
+  const [activeGame, setActiveGame] = useState<GameType | null>(null);
+  const [decipheredEntryId, setDecipheredEntryId] = useState<string | null>(null);
+
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cursorPositionRef = useRef<number | null>(null);
@@ -133,6 +145,7 @@ export default function ConfessPage() {
                 if (entry.lockoutUntil && Date.now() > entry.lockoutUntil) {
                     needsUpdate = true;
                     const newEntry = { ...entry, failureCount: 0, lockoutUntil: undefined };
+                    // If the currently selected entry is the one being unlocked, update it
                     if (selectedEntry?.id === newEntry.id) {
                         setSelectedEntry(newEntry);
                     }
@@ -216,29 +229,6 @@ export default function ConfessPage() {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
-
-  // Simulates a decipher attempt, incrementing failure count and setting a lockout
-  const handleDecipher = (entryId: string) => {
-    setEntries(prevEntries => 
-        prevEntries.map(entry => {
-            if (entry.id === entryId) {
-                if (isEntryLocked(entry)) return entry;
-                
-                const newFailureCount = (entry.failureCount || 0) + 1;
-                let newLockoutUntil = entry.lockoutUntil;
-                
-                if (newFailureCount >= 3) {
-                    newLockoutUntil = now + 30000; // 30-second lockout
-                }
-
-                const updatedEntry = { ...entry, failureCount: newFailureCount, lockoutUntil: newLockoutUntil };
-                setSelectedEntry(updatedEntry);
-                return updatedEntry;
-            }
-            return entry;
-        })
-    );
-  };
   
   const handleClearMemories = () => {
     setEntries([]);
@@ -260,6 +250,52 @@ export default function ConfessPage() {
 
   const handleOpenBook = () => setSpread(true);
   const handleCloseBook = () => setSpread(false);
+
+  // --- New Game Logic ---
+
+  const handleDecipherAttempt = () => {
+    if (!selectedEntry || isEntryLocked(selectedEntry)) return;
+
+    const games: GameType[] = ["guess", "memory", "tictactoe"];
+    const random_game = games[Math.floor(Math.random() * games.length)];
+    
+    setActiveGame(random_game);
+    setShowGameModal(true);
+  };
+
+  const handleGameEnd = (won: boolean) => {
+    setShowGameModal(false);
+    setActiveGame(null);
+
+    if (!selectedEntry) return;
+
+    if (won) {
+      setDecipheredEntryId(selectedEntry.id);
+      setTimeout(() => {
+        setDecipheredEntryId(null);
+      }, 5000); // Show for 5 seconds
+
+      // Reset failure count on win and update the selected entry state
+      const updatedEntry = { ...selectedEntry, failureCount: 0, lockoutUntil: undefined };
+      setEntries(prev => prev.map(e => e.id === selectedEntry.id ? updatedEntry : e));
+      setSelectedEntry(updatedEntry);
+
+    } else {
+      // Handle failure: increment count and apply lockout if necessary
+      const newFailureCount = (selectedEntry.failureCount || 0) + 1;
+      let newLockoutUntil = selectedEntry.lockoutUntil;
+      
+      if (newFailureCount >= 3) {
+          newLockoutUntil = Date.now() + 30000; // 30-second lockout
+      }
+
+      const updatedEntry = { ...selectedEntry, failureCount: newFailureCount, lockoutUntil: newLockoutUntil };
+      
+      setEntries(prev => prev.map(e => e.id === selectedEntry.id ? updatedEntry : e));
+      setSelectedEntry(updatedEntry);
+    }
+  };
+
 
   return (
     <>
@@ -313,15 +349,13 @@ export default function ConfessPage() {
 
             {/* Left page - cover */}
             <motion.div
-              className={`w-full lg:w-[520px] h-auto aspect-[520/720] lg:h-[720px] relative items-center justify-center shrink-0 ${spread ? 'hidden lg:flex' : 'flex'}`}
+              className={`w-full lg:w-[520px] h-auto aspect-[520/720] lg:h-[720px] relative items-center justify-center shrink-0 ${spread ? 'hidden lg:flex' : 'flex'} rounded-t-lg lg:rounded-t-none lg:rounded-l-lg origin-bottom lg:origin-right`}
               style={{
                 background: "#d8c8a8",
                 boxShadow: spread
                   ? "0 25px 50px rgba(0,0,0,0.6), -10px 0 20px rgba(0,0,0,0.3)"
                   : "0 18px 36px rgba(0,0,0,0.5)",
                 border: "2px solid #2a150a",
-                borderRadius: "10px 10px 0 0 lg:borderRadius: '10px 0 0 10px'",
-                transformOrigin: "bottom center lg:transformOrigin: 'right center'",
                 transformStyle: "preserve-3d",
               }}
               animate={{
@@ -382,14 +416,12 @@ export default function ConfessPage() {
             <AnimatePresence>
               {spread && (
                 <motion.div
-                  className="w-full lg:w-[520px] h-auto aspect-[520/720] lg:h-[720px] relative overflow-hidden shrink-0"
+                  className="w-full lg:w-[520px] h-auto aspect-[520/720] lg:h-[720px] relative overflow-hidden shrink-0 rounded-b-lg lg:rounded-b-none lg:rounded-r-lg origin-top lg:origin-left"
                   style={{
                     background: "#f9e9ec",
                     backgroundImage: "repeating-linear-gradient(to bottom, transparent, transparent 31px, #e8d7da 32px)",
                     backgroundSize: "100% 32px",
                     boxShadow: "0 25px 50px rgba(0,0,0,0.6), 10px 0 20px rgba(0,0,0,0.3)",
-                    borderRadius: "0 0 10px 10px lg:borderRadius: '0 10px 10px 0'",
-                    transformOrigin: "top center lg:transformOrigin: 'left center'",
                     transformStyle: "preserve-3d",
                   }}
                   initial={{ opacity: 0, y: -20, rotateY: 25 }}
@@ -582,7 +614,7 @@ export default function ConfessPage() {
                 Created on: {new Date(selectedEntry.createdAt).toLocaleString()}
               </p>
               <div className="bg-white/80 p-4 rounded-md h-64 overflow-y-auto font-mono text-stone-700 border border-stone-300/80 whitespace-pre-wrap break-words custom-scrollbar">
-                {selectedEntry.content}
+                {decipheredEntryId === selectedEntry.id ? selectedEntry.actualContent : selectedEntry.content}
               </div>
               <div className="mt-6 flex justify-end items-center">
                 {isEntryLocked(selectedEntry) ? (
@@ -592,7 +624,7 @@ export default function ConfessPage() {
                 ) : (
                   <button
                     className="text-base md:text-lg bg-blue-200 hover:bg-blue-300 px-6 py-2 rounded text-blue-900 font-semibold transition-colors shadow-md hover:shadow-lg"
-                    onClick={() => handleDecipher(selectedEntry.id)}
+                    onClick={handleDecipherAttempt}
                     title={`Decipher attempt: ${selectedEntry.failureCount}/3`}
                   >
                     🔓 Attempt to Decipher
@@ -604,11 +636,34 @@ export default function ConfessPage() {
         )}
       </AnimatePresence>
 
+      {/* Game Modal */}
+      <AnimatePresence>
+        {showGameModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[60] p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+             <motion.div
+                className="flex justify-center"
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+             >
+                {activeGame === 'guess' && <GuessNum onGameEnd={handleGameEnd} />}
+                {activeGame === 'memory' && <MemoryGame onGameEnd={handleGameEnd} />}
+                {activeGame === 'tictactoe' && <TicTacToe onGameEnd={handleGameEnd} />}
+             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Confirmation Modal for clearing memories */}
       <AnimatePresence>
         {showClearConfirm && (
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-[#4a2511] flex items-center justify-center z-50 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -623,16 +678,16 @@ export default function ConfessPage() {
             >
               <h3 className="text-xl md:text-2xl font-bold font-serif text-stone-900 mb-4">Burn Your Memories?</h3>
               <p className="text-stone-700 mb-6 text-sm md:text-base">This will permanently destroy all of your sealed thoughts. This action cannot be undone and the ashes will scatter to the wind.</p>
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
                 <button 
                   onClick={() => setShowClearConfirm(false)}
-                  className="px-4 py-2 rounded-md font-semibold text-stone-800 bg-stone-300/70 hover:bg-stone-400/70 transition-colors"
+                  className="px-4 py-2 rounded-md font-semibold text-stone-800 bg-stone-300/70 hover:bg-stone-400/70 transition-colors w-full sm:w-auto"
                 >
                   Have Mercy
                 </button>
                 <button 
                   onClick={handleClearMemories}
-                  className="px-4 py-2 rounded-md font-semibold text-white bg-red-800 hover:bg-red-900 shadow-lg hover:shadow-xl transition-all"
+                  className="px-4 py-2 rounded-md font-semibold text-white bg-red-800 hover:bg-red-900 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
                 >
                   Burn Them All
                 </button>

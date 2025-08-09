@@ -4,8 +4,13 @@ import { useState } from "react";
 // Type definitions for players
 type Player = "X" | "O" | null;
 
+// Props interface for the component
+interface TicTacToeProps {
+  onGameEnd: (won: boolean) => void;
+}
+
 // Main component for the Tic-Tac-Toe game with a vintage theme
-export default function TicTacToe() {
+export default function TicTacToe({ onGameEnd }: TicTacToeProps) {
   const [board, setBoard] = useState<Player[]>(Array(9).fill(null));
   const [playerTurn, setPlayerTurn] = useState<boolean>(true); // true = player X
   const [gameOver, setGameOver] = useState<boolean>(false);
@@ -13,14 +18,9 @@ export default function TicTacToe() {
 
   // All possible winning combinations
   const winningCombos = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6],
   ];
 
   // Checks for a winner or a draw
@@ -44,7 +44,7 @@ export default function TicTacToe() {
       endGame(result);
     } else {
       setPlayerTurn(false);
-      setTimeout(() => aiMove(newBoard), 700); // Increased delay for a smoother animation
+      setTimeout(() => aiMove(newBoard), 700);
     }
   };
 
@@ -52,13 +52,10 @@ export default function TicTacToe() {
   const aiMove = (currentBoard: Player[]) => {
     const ai = "O";
     const human = "X";
-    // First, check if AI can win on the next move
     let move = findBestMove(currentBoard, ai);
-    // If not, check if AI needs to block the human player from winning
     if (move === null) {
       move = findBestMove(currentBoard, human);
     }
-    // If neither, make a random move
     if (move === null) {
       const empty = currentBoard
         .map((v, i) => (v ? null : i))
@@ -91,10 +88,12 @@ export default function TicTacToe() {
     return null;
   };
 
-  // Ends the game and sets the winner/draw state
+  // Ends the game and sets the winner/draw state, then calls onGameEnd
   const endGame = (result: Player | "draw") => {
     setGameOver(true);
     setWinner(result === "draw" ? null : result);
+    // A win is only when the player ('X') wins. A draw or AI win is a loss.
+    onGameEnd(result === 'X');
   };
 
   // Resets the game to its initial state
@@ -107,15 +106,11 @@ export default function TicTacToe() {
 
   return (
     <div
-      className="min-h-screen p-4 md:p-8 select-none font-serif"
-      style={{
-        background:
-          "radial-gradient(ellipse at center, #8B4513 0%, #654321 35%, #3E2723 70%, #1C0E0A 100%)",
-      }}
+      className="font-serif select-none"
       onContextMenu={(e) => e.preventDefault()}
     >
       {/* Container for the main game UI */}
-      <div className="relative max-w-xl mx-auto py-8">
+      <div className="relative max-w-xl mx-auto">
         {/* Book Cover */}
         <div 
           className="relative rounded-2xl shadow-2xl transition-all duration-300 border-4 border-amber-800"
@@ -148,7 +143,7 @@ export default function TicTacToe() {
             </div>
 
             {/* Game Status as scroll */}
-            <div className="relative z-10 text-center mb-6">
+            <div className="relative z-10 text-center mb-6 h-16 flex items-center justify-center">
               {!gameOver && (
                 <div 
                   className="relative rounded-full px-6 py-3 border-2 border-amber-700 shadow-md transform hover:scale-105 transition-transform inline-block"

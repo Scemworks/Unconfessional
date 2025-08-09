@@ -1,11 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
 
+// Props interface for the component
+interface MemoryGameProps {
+  onGameEnd: (won: boolean) => void;
+}
+
 // Main component for the memory game with a refined vintage theme
-export default function MemoryGame() {
+export default function MemoryGame({ onGameEnd }: MemoryGameProps) {
   // Expanded pool of weird/funny emojis
   const symbols = [
-    "🍕", "🦄", "💩", "🤡", "�", "🦖", "🪳", "🛸", "👽", "🧟",
+    "🍕", "🦄", "💩", "🤡", "👹", "🦖", "🪳", "🛸", "👽", "🧟",
     "🤯", "🐙", "🍔", "🪼", "🍟", "🎃", "🦔", "🪱"
   ];
 
@@ -30,8 +35,9 @@ export default function MemoryGame() {
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && !won) {
       setGameOver(true);
+      onGameEnd(false); // Call onGameEnd for a loss (time out)
     }
-  }, [timeLeft, gameOver, won]);
+  }, [timeLeft, gameOver, won, onGameEnd]);
 
   // Function to initialize or reset the game
   const startGame = () => {
@@ -48,7 +54,6 @@ export default function MemoryGame() {
 
   // Handler for flipping a card
   const handleFlip = (index: number) => {
-    // Game is over or card is already flipped/matched, so do nothing
     if (gameOver || flipped.length === 2 || flipped.includes(index) || matched.includes(index)) {
       return;
     }
@@ -56,24 +61,21 @@ export default function MemoryGame() {
     const newFlipped = [...flipped, index];
     setFlipped(newFlipped);
 
-    // If two cards are flipped, check for a match
     if (newFlipped.length === 2) {
       setTimeout(() => {
         const [first, second] = newFlipped;
         if (cards[first] === cards[second]) {
-          // It's a match!
           const newMatched = [...matched, first, second];
           setMatched(newMatched);
           setPairsMatched((prev) => prev + 1);
-          // Check for a win condition
           if (newMatched.length === cards.length) {
             setWon(true);
             setGameOver(true);
+            onGameEnd(true); // Call onGameEnd for a win
           }
         }
-        // Reset the flipped cards after the check
         setFlipped([]);
-      }, 700); // Increased delay for a smoother animation effect
+      }, 700);
     }
   };
 
@@ -86,15 +88,11 @@ export default function MemoryGame() {
 
   return (
     <div
-      className="min-h-screen p-4 md:p-8 select-none font-serif"
-      style={{
-        background:
-          "radial-gradient(ellipse at center, #8B4513 0%, #654321 35%, #3E2723 70%, #1C0E0A 100%)",
-      }}
+      className="select-none font-serif"
       onContextMenu={(e) => e.preventDefault()}
     >
       {/* Container for the main game UI */}
-      <div className="relative max-w-4xl mx-auto py-8">
+      <div className="relative max-w-4xl mx-auto">
         {/* Book Cover */}
         <div 
           className="relative rounded-2xl shadow-2xl transition-all duration-300 border-4 border-amber-800"
