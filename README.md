@@ -43,19 +43,31 @@ For Software:
 For Software: 
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot1](./resources/Screenshot%20(492).png)
+HomePage when the site loads
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot2](./resources/Screenshot%20(493).png)
+Entry page of the diary
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot3](./resources/Screenshot%20(494).png)
+Message visible page
+
+![Screenshot4](./resources/Screenshot%20(495).png)
+
+![Screenshot5](./resources/Screenshot%20(496).png)
+Memory game
+
+![Screenshot6](./resources/Screenshot%20(497).png)
+Number Guess game
+
+![Screenshot7](./resources/Screenshot%20(498).png)
+Tic Tac Toe game
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+![Video Demo](./resources/unconfessional.mp4)
+
+This showcases all the features of this Project such as deciphering the message, deleting the entry, sealing the thoughts, games etc.....
 
 # Additional Demos
 [Add any extra demo materials/links]
@@ -70,6 +82,4 @@ Made with ❤️ at TinkerHub Useless Projects
 
 ![Static Badge](https://img.shields.io/badge/TinkerHub-24?color=%23000000&link=https%3A%2F%2Fwww.tinkerhub.org%2F)
 ![Static Badge](https://img.shields.io/badge/UselessProjects--25-25?link=https%3A%2F%2Fwww.tinkerhub.org%2Fevents%2FQ2Q1TQKX6Q%2FUseless%2520Projects)
-
-
 
