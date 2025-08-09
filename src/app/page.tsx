@@ -1,103 +1,247 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 
-export default function Home() {
+type Entry = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+};
+
+export default function ConfessPage() {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [view, setView] = useState<"grid" | "list">("grid");
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("unconfessional.entries");
+      if (raw) setEntries(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("unconfessional.entries", JSON.stringify(entries));
+    } catch {}
+  }, [entries]);
+
+  const canSave = useMemo(
+    () => title.trim().length > 0 || content.trim().length > 0,
+    [title, content]
+  );
+
+  const save = () => {
+    if (!canSave) return;
+    const now = new Date().toISOString();
+    setEntries((prev) => [
+      { id: `${Date.now()}`, title: title.trim(), content: content.trim(), createdAt: now },
+      ...prev,
+    ]);
+    setTitle("");
+    setContent("");
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <motion.div
+      className="min-h-screen w-full flex items-center justify-center p-6 md:p-8"
+      style={{
+        background:
+          "radial-gradient(1200px 600px at 10% -10%, #5e1f00 0%, #7a2f0a 35%, #8b3a10 60%, #2c0b00 100%)",
+      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      <div className="flex gap-1">
+        {/* Left page - cover */}
+        <motion.div
+          className="w-[520px] h-[720px] relative flex items-center justify-center"
+          style={{
+            background: "#C8B086",
+            boxShadow: "0 18px 36px rgba(0,0,0,0.5)",
+            border: "10px solid #9B8461",
+            borderRadius: "10px 0 0 10px",
+          }}
+          initial={{ rotateY: 0 }}
+          animate={{ rotateY: -5 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          {/* embossy borders */}
+          <div className="absolute top-3 left-3 right-3 bottom-3 border-[10px] border-[#3b2e1f] opacity-90 rounded-sm" />
+          <div className="absolute top-10 left-10 right-10 bottom-10 border-4 border-pink-300/80 rounded-sm" />
+          {/* top tab */}
+          <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#d9c1a5] text-[#3b2e1f] text-[10px] tracking-widest px-2 py-[2px] rounded-b shadow">
+            uconf
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          {/* cover content */}
+          <div className="relative z-10 flex flex-col items-center justify-center w-full h-full px-6">
+            <div className="bg-pink-300 rounded-md p-6 w-11/12 flex flex-col items-center justify-center relative shadow-inner">
+              <div className="text-center mb-2">
+                <h1 className="text-4xl font-black text-black leading-tight">
+                  The
+                  <br />
+                  Unconfessional
+                </h1>
+              </div>
+              <p className="text-black text-base italic mt-1 mb-6">
+                Your Thoughts are safe here
+              </p>
+              <div className="w-40 h-40 bg-[#D9C8A0] rounded-md mb-2 flex items-center justify-center shadow-inner">
+                <div className="w-32 h-32 rounded-full border-2 border-pink-400 flex items-center justify-center text-6xl opacity-60">
+                  ✿
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Right page */}
+        <motion.div
+          className="w-[520px] h-[720px] relative overflow-hidden"
+          style={{
+            background: "#FFE0E5",
+            boxShadow: "0 18px 36px rgba(0,0,0,0.5)",
+            borderRadius: "0 10px 10px 0",
+          }}
+          initial={{ rotateY: 0 }}
+          animate={{ rotateY: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+          {/* ruled paper + pinstripes */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-70"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(0deg, transparent, transparent 31px, #f7bdc7 31px, #f7bdc7 32px), repeating-linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0) 12px, rgba(255,192,203,0.35) 12px, rgba(255,192,203,0.35) 24px)",
+            }}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          {/* page curl hint */}
+          <div
+            className="absolute right-0 bottom-0 w-10 h-10"
+            style={{
+              background:
+                "radial-gradient(14px at 100% 100%, rgba(0,0,0,0.25), transparent 70%)",
+            }}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+          <div className="relative z-10 p-10 h-full flex flex-col">
+            {/* header */}
+            <div className="mb-6">
+              <h2 className="text-2xl font-extrabold text-gray-800 mb-1">
+                New Entry
+              </h2>
+              <p className="text-gray-700 text-sm">What's on your mind?</p>
+            </div>
+
+            {/* title */}
+            <div className="border-b border-gray-300 mb-3">
+              <input
+                type="text"
+                placeholder="Give your thoughts a title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full p-2 bg-transparent border-none text-gray-800 text-lg focus:outline-none placeholder:text-gray-500"
+              />
+            </div>
+
+            {/* content — sits on the ruled background */}
+            <div className="flex-1">
+              <textarea
+                placeholder="Then write them down here"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full h-72 p-2 bg-transparent border-none resize-none text-gray-800 focus:outline-none leading-8 placeholder:text-gray-500"
+                style={{ lineHeight: "32px" }}
+              />
+            </div>
+
+            {/* button */}
+            <div className="flex justify-end mt-auto mb-4">
+              <button
+                className="px-4 py-2 text-gray-800 text-sm font-semibold rounded border border-gray-400/60 bg-white/60 hover:bg-white transition disabled:opacity-40"
+                onClick={save}
+                disabled={!canSave}
+              >
+                Seal Your Thoughts
+              </button>
+            </div>
+
+            {/* memories */}
+            <div className="border-t border-gray-300 pt-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xl font-semibold text-gray-800">
+                  Memories
+                </h3>
+                <div className="flex gap-2">
+                  <button
+                    aria-label="Grid view"
+                    className={`p-1 rounded ${view === "grid" ? "bg-black/10" : ""}`}
+                    onClick={() => setView("grid")}
+                  >
+                    ⊞
+                  </button>
+                  <button
+                    aria-label="List view"
+                    className={`p-1 rounded ${view === "list" ? "bg-black/10" : ""}`}
+                    onClick={() => setView("list")}
+                  >
+                    ≡
+                  </button>
+                </div>
+              </div>
+
+              {entries.length === 0 ? (
+                <p className="text-gray-600 text-sm">
+                  Your sealed thoughts will appear here.
+                </p>
+              ) : view === "grid" ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {entries.map((e) => (
+                    <div
+                      key={e.id}
+                      className="rounded-md border border-gray-300/70 bg-white/60 p-3 shadow-sm"
+                    >
+                      <div className="text-sm font-semibold text-gray-800 line-clamp-1">
+                        {e.title || "Untitled"}
+                      </div>
+                      <div className="text-xs text-gray-600 line-clamp-3 mt-1">
+                        {e.content}
+                      </div>
+                      <div className="text-[10px] text-gray-500 mt-2">
+                        {new Date(e.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <ul className="divide-y divide-gray-300/70 bg-white/40 rounded-md">
+                  {entries.map((e) => (
+                    <li key={e.id} className="p-3">
+                      <div className="flex items-start justify-between">
+                        <div className="mr-3">
+                          <div className="text-sm font-semibold text-gray-800">
+                            {e.title || "Untitled"}
+                          </div>
+                          <div className="text-xs text-gray-600 line-clamp-2">
+                            {e.content}
+                          </div>
+                        </div>
+                        <div className="text-[10px] text-gray-500 whitespace-nowrap">
+                          {new Date(e.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
   );
 }
