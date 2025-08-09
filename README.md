@@ -56,15 +56,16 @@ Entry page of the diary
 Message visible page
 
 ![Screenshot4](./resources/Screenshot%20(495).png)
-
-![Screenshot5](./resources/Screenshot%20(496).png)
 Memory game
 
-![Screenshot6](./resources/Screenshot%20(497).png)
+![Screenshot5](./resources/Screenshot%20(496).png)
 Number Guess game
 
-![Screenshot7](./resources/Screenshot%20(498).png)
+![Screenshot6](./resources/Screenshot%20(497).png)
 Tic Tac Toe game
+
+![Screenshot7](./resources/Screenshot%20(498).png)
+Deciphered Message (Original message)
 
 ### Project Demo
 # Video
