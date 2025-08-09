@@ -68,12 +68,13 @@ Tic Tac Toe game
 
 ### Project Demo
 # Video
-![Video Demo](./resources/unconfessional.mp4)
+![Video Demo](https://drive.google.com/file/d/1Rp0L2Z3u659EXn0Ir7C1Z7NJ7pWXjmjm/view?usp=drivesdk)
 
 This showcases all the features of this Project such as deciphering the message, deleting the entry, sealing the thoughts, games etc.....
 
 # Additional Demos
 [Site Link](https://unconfessional.vercel.app)
+
 ## Team Contributions
 - Mohammed Shadin: Implemented Keyboard Roulette, Linked mini games to  decipher, Initial Design
 - N Fadeela: Proposed the idea, Implemented the mini games, Design Finalization, Documentation
